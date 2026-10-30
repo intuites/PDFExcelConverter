@@ -49,3 +49,25 @@ with tempfile.TemporaryDirectory() as d:
     pdf_to_csv(pdf, out)
     assert open(out, encoding="utf-8-sig").readline().strip() == "Date,Description,Amount,Balance"
     print("OK: statement parsed and reconciled")
+
+# Missing PDF Unicode mappings must be recovered from the correct font, or
+# retained visibly. Silently dropping a glyph can alter a date or account ID.
+from types import SimpleNamespace
+from unittest.mock import patch
+from convert import _page_text
+
+class GlyphPage:
+    def __init__(self):
+        self.chars = [{"fontname": "Demo+Calibri", "text": value}
+                      for value in ["0", "(cid:1007)", "/28 Chk", "(cid:856)", "5961"]]
+        self.page_obj = SimpleNamespace(resources={"Font": {
+            "F1": {"BaseFont": "Demo+Calibri"}}})
+
+    def extract_text(self):
+        return "".join(char["text"] for char in self.chars)
+
+with patch("convert._embedded_glyph_map", return_value={1007: "3", 856: "."}):
+    assert _page_text(GlyphPage()) == "03/28 Chk.5961"
+with patch("convert._embedded_glyph_map", return_value={}):
+    assert "(cid:1007)" in _page_text(GlyphPage())
+print("OK: unmapped glyphs recovered or preserved, never silently deleted")

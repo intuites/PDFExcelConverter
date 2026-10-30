@@ -1,5 +1,7 @@
 # PDF ↔ Excel converter
 
+Supports PDF statements and Excel workbooks in `.xls`, `.xlsx`, and `.xlsm` formats. Legacy `.xls` workbooks are exported to PDF using `xlrd`.
+
 Install the Python dependencies and start the API/web server from this folder:
 
 ```powershell

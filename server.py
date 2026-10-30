@@ -1,5 +1,6 @@
 """Web UI for convert.py. Run: python server.py  then open http://127.0.0.1:8000"""
 import tempfile
+import socket
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -16,6 +17,17 @@ MIME = {
 }
 
 
+class LocalServer(ThreadingHTTPServer):
+    # Windows permits multiple SO_REUSEADDR listeners on one port. Requests
+    # can then reach an old parser despite starting a newer server instance.
+    allow_reuse_address = False
+
+    def server_bind(self):
+        if hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        super().server_bind()
+
+
 class Handler(SimpleHTTPRequestHandler):
     def do_POST(self):
         url = urlparse(self.path)
@@ -27,7 +39,7 @@ class Handler(SimpleHTTPRequestHandler):
         ext = Path(name).suffix.lower()
         size = int(self.headers.get("Content-Length") or 0)
         if ext not in CONVERTERS:
-            return self.send_error(400, "Upload a .pdf, .xlsx or .xlsm file")
+            return self.send_error(400, "Upload a .pdf, .xls, .xlsx or .xlsm file")
         fmt = query.get("format", [next(iter(CONVERTERS[ext]))])[0]
         if fmt not in CONVERTERS[ext]:
             return self.send_error(400, f"Cannot make .{fmt} from {ext}")
@@ -54,6 +66,6 @@ class Handler(SimpleHTTPRequestHandler):
 if __name__ == "__main__":
     web = Path(__file__).parent / "web"
     # 127.0.0.1 only: the server is not reachable from other machines
-    server = ThreadingHTTPServer(("127.0.0.1", 8000), partial(Handler, directory=str(web)))
+    server = LocalServer(("127.0.0.1", 8000), partial(Handler, directory=str(web)))
     print("Open http://127.0.0.1:8000")
     server.serve_forever()

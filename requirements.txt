@@ -1,3 +1,5 @@
 openpyxl
+xlrd
 pdfplumber
 reportlab
+fonttools
