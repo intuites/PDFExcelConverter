@@ -32,10 +32,12 @@ function button(label, onClick) {
 
 async function convert(format) {
   // raw bytes as the body keeps the server free of multipart parsing
-  const res = await fetch(`/convert?name=${encodeURIComponent(file.name)}&format=${format}`, { method: "POST", body: file });
+  // Vercel serves Python Functions under /api. Using the function URL directly
+  // also works if the optional /convert rewrite is not enabled in a deployment.
+  const res = await fetch(`/api/convert?name=${encodeURIComponent(file.name)}&format=${format}`, { method: "POST", body: file });
   if (!res.ok) {
     if (res.status === 404) {
-      throw new Error("Conversion server not found. Start it with: python server.py, then open http://127.0.0.1:8000");
+      throw new Error("Vercel conversion function not found. Redeploy after pushing the api/convert.py file.");
     }
     const html = await res.text();
     const msg = new DOMParser().parseFromString(html, "text/html").querySelector("p")?.textContent;
