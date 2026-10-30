@@ -1,5 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/convert.py": {
+      "maxDuration": 60
+    }
+  },
   "rewrites": [
     { "source": "/convert", "destination": "/api/convert" },
     { "source": "/", "destination": "/web/index.html" },
