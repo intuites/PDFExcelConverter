@@ -1,0 +1,52 @@
+:root {
+  --bg: #f4f6f9; --card: #fff; --text: #1d2433; --muted: #5b6475;
+  --accent: #2f6fde; --border: #c9d1de; --error: #c0362c; --ok: #1f7a3d; --head: #e8edf5;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #14171d; --card: #1d222b; --text: #e6e9ef; --muted: #9aa3b2;
+          --accent: #5b8ff0; --border: #39414f; --error: #ef6b60; --ok: #5cc47f; --head: #262c37; }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px;
+  background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, sans-serif;
+}
+main {
+  width: 100%; max-width: 960px; background: var(--card); padding: 28px;
+  border-radius: 12px; box-shadow: 0 4px 20px rgb(0 0 0 / .08);
+}
+h1 { margin: 0 0 4px; font-size: 1.5rem; }
+.hint { margin: 0 0 20px; color: var(--muted); font-size: .9rem; }
+
+#drop {
+  display: block; padding: 36px 16px; text-align: center; cursor: pointer;
+  border: 2px dashed var(--border); border-radius: 10px; color: var(--muted);
+  transition: border-color .15s, background .15s; word-break: break-all;
+}
+#drop:hover, #drop.over, #drop:focus-within { border-color: var(--accent); color: var(--text); }
+#drop input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+
+button {
+  width: 100%; margin-top: 16px; padding: 12px; border: 0; border-radius: 8px;
+  background: var(--accent); color: #fff; font: inherit; font-weight: 600; cursor: pointer;
+}
+button:disabled { opacity: .5; cursor: not-allowed; }
+button:focus-visible { outline: 3px solid var(--text); outline-offset: 2px; }
+
+#actions { display: flex; gap: 8px; flex-wrap: wrap; }
+#actions button { flex: 1 1 120px; }
+
+#status { min-height: 1.5em; margin: 12px 0 0; font-size: .9rem; }
+.error { color: var(--error); }
+.ok { color: var(--ok); }
+
+#summary { display: grid; grid-template-columns: max-content 1fr; gap: 2px 16px; margin: 8px 0; font-size: .9rem; }
+#summary dt { color: var(--muted); }
+#summary dd { margin: 0; font-variant-numeric: tabular-nums; }
+#check { font-size: .9rem; font-weight: 600; }
+.scroll { max-height: 60vh; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+#rows { width: 100%; border-collapse: collapse; font-size: .85rem; }
+#rows th { position: sticky; top: 0; background: var(--head); text-align: left; }
+#rows th, #rows td { padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+#rows .num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+#rows .neg { color: var(--error); }

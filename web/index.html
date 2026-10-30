@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PDF ⇄ Excel</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>PDF ⇄ Excel</h1>
+    <p class="hint">Bank statement PDF → preview, then Excel / CSV. Excel → PDF. Max 50 MB.</p>
+
+    <label id="drop" for="file">
+      <input id="file" type="file" accept=".pdf,.xlsx,.xlsm">
+      <span id="drop-text">Drop a file here or <u>browse</u></span>
+    </label>
+
+    <div id="actions"></div>
+    <p id="status" role="status" aria-live="polite"></p>
+
+    <section id="preview" hidden>
+      <dl id="summary"></dl>
+      <p id="check"></p>
+      <div class="scroll"><table id="rows"></table></div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
